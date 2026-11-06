@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/*
+ * Identità visiva BIBLIOVOLTA
+ * Blu istituzionale, bianco, dettagli legno e oro della biblioteca storica.
+ * Sfondi chiari, card con angoli leggermente arrotondati, ombre leggere.
+ */
+:root {
+  --paper: #f5f6f9;          /* sfondo chiaro, leggermente freddo */
+  --surface: #ffffff;
+  --ink: #0f2350;            /* blu istituzionale */
+  --ink-soft: #1d3a78;
+  --blue-50: #eef2fb;
+  --blue-100: #dbe3f5;
+  --muted: #5b6680;
+  --line: #e3e7f0;
+  --gold: #c39a45;           /* oro delle cornici */
+  --gold-soft: #f3e8cd;
+  --wood: #6e4428;           /* legno degli scaffali */
+  --wood-soft: #f2e9e1;
+  --ok: #18794e;
+  --ok-soft: #e1f3ea;
+  --warn: #b5650d;
+  --warn-soft: #fcefdc;
+  --danger: #b42318;
+  --danger-soft: #fbe6e4;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-blue-50: var(--blue-50);
+  --color-blue-100: var(--blue-100);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-wood: var(--wood);
+  --color-wood-soft: var(--wood-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  /* alias compatibili con la Fase 1 */
+  --color-accent: var(--gold);
+  --color-accent-deep: var(--wood);
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-serif, Georgia, serif;
+
+  --shadow-soft: 0 1px 2px rgb(15 35 80 / 0.04), 0 4px 16px -6px rgb(15 35 80 / 0.10);
+  --shadow-lift: 0 2px 4px rgb(15 35 80 / 0.05), 0 16px 40px -16px rgb(15 35 80 / 0.25);
+  --radius-card: 14px;
+
+  --animate-rise: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 0.4s ease-out both;
+  --animate-sheet: sheet 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* filetto dorato decorativo, come le cornici degli scaffali */
+.gold-rule {
+  height: 2px;
+  width: 56px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  border-radius: 2px;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }

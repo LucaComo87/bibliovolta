@@ -1,0 +1,60 @@
+{
+  "name": "bibliovolta",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "db:test": "tsx scripts/test-db.ts",
+    "teacher:create": "tsx --env-file=.env.local scripts/create-teacher.ts",
+    "check": "npm run typecheck && npm run lint && npm run db:test && npm run build",
+    "teacher:reset-password": "tsx --env-file=.env.local scripts/reset-teacher-password.ts",
+    "test:auth": "node scripts/test-auth.mjs",
+    "stack:local": "node scripts/local-stack/stack.mjs",
+    "test:bookings": "node scripts/test-bookings.mjs",
+    "test:waitlist": "node scripts/test-waitlist.mjs",
+    "test:teacher": "node scripts/test-teacher.mjs",
+    "privacy:export": "tsx --env-file=.env.local scripts/privacy-admin.ts export",
+    "privacy:erase": "tsx --env-file=.env.local scripts/privacy-admin.ts erase",
+    "privacy:purge": "tsx --env-file=.env.local scripts/privacy-admin.ts purge",
+    "privacy:doc": "tsx scripts/privacy-doc.ts",
+    "db:backup": "bash scripts/backup-db.sh",
+    "test:security": "node scripts/test-security.mjs",
+    "test:ui": "node scripts/test-ui.mjs",
+    "test:all": "node scripts/test-all.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
+    "exceljs": "^4.4.0",
+    "lucide-react": "^1.70.0",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "resend": "^6.37.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "embedded-postgres": "^17.11.0-beta.19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "pg": "^8.23.1",
+    "playwright": "^1.65.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}

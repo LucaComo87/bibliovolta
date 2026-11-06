@@ -27,7 +27,13 @@ function contentSecurityPolicy() {
   ].join("; ");
 }
 
+/** Informativa privacy ufficiale della scuola: /privacy rimanda lì (link usato anche da Google OAuth). */
+const SCHOOL_PRIVACY_URL = "https://liceovoltacomo.edu.it/privacy-policy/";
+
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [{ source: "/privacy", destination: SCHOOL_PRIVACY_URL, permanent: false }];
+  },
   /* config options here */
   // cartella di build separata per i test end-to-end (npm run test:auth)
   distDir: process.env.NEXT_DIST_DIR || ".next",

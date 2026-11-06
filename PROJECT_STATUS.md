@@ -135,6 +135,10 @@ La numerazione segue le richieste del docente (dalla Fase 5 l'ordine è cambiato
 - ⏳ Prova con un account studente @stud reale (account di prova chiesto al tecnico; verificare eventuale blocco delle app esterne per i minorenni).
 - ⏳ Resend (dominio, API key), automazioni Supabase Cron + pg_net, backup, approvazione informativa.
 
+## Informativa privacy (7/11/2026)
+- Su richiesta: la pagina `/privacy` di BIBLIOVOLTA è stata tolta; `/privacy` (link usato anche da Google OAuth) e tutti i link del sito portano all'informativa ufficiale della scuola, https://liceovoltacomo.edu.it/privacy-policy/ (`APP.privacyUrl` in `src/lib/config.ts` e `next.config.ts`).
+- Quell'informativa non cita BIBLIOVOLTA né i suoi fornitori e dichiara che non ci sono trasferimenti extra UE: va integrata dalla scuola (testo proposto in `docs/INFORMATIVA_PRIVACY.md`).
+
 ## Prossimo passo operativo
 1. Creare l'account docente e accedere a /accesso/docenti.
 2. Collaudo con un account @stud di prova.

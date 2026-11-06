@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP } from "@/lib/config";
 import { BellRing, CalendarCheck2, CalendarDays, GraduationCap, Hourglass, Mail } from "lucide-react";
 import { LibraryBackdrop } from "@/components/media/LibraryPhoto";
 import { DateTile } from "@/components/student/BookingCards";
@@ -135,7 +136,7 @@ export function StudentWelcome({
         ) : (
           <span className="opacity-60">Scarica i miei dati</span>
         )}
-        <a href="/privacy" className="font-semibold text-ink-soft underline-offset-2 hover:underline">Informativa privacy</a>
+        <a href={APP.privacyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink-soft underline-offset-2 hover:underline">Informativa privacy</a>
       </p>
     </div>
   );

@@ -83,8 +83,8 @@ Nessuna voce è segnata COMPLETATO senza una verifica automatica superata; la co
 | Download dei propri dati (diritto di accesso) | COMPLETATO | test:security, db:test |
 | Cancellazione su richiesta con anonimizzazione del registro | COMPLETATO | db:test |
 | Job notturno di conservazione su Supabase Cron | DA CONFIGURARE | PUBBLICAZIONE.md §8 |
-| Informativa privacy pubblicata su `/privacy` | COMPLETATO | test:security, test:ui |
-| Approvazione dell'informativa (Dirigente e RPD), dati del titolare e del RPD | DA CONFIGURARE | `src/lib/privacy/informativa.ts` |
+| Informativa privacy: `/privacy` e tutti i link portano all'informativa ufficiale della scuola | COMPLETATO | test:security |
+| Integrare l'informativa della scuola con BIBLIOVOLTA (fornitori Supabase, Vercel, Resend, tempi di conservazione): testo proposto in `docs/INFORMATIVA_PRIVACY.md` | DA CONFIGURARE | RPD della scuola |
 | Accordi con i fornitori (DPA) e registro dei trattamenti | DA CONFIGURARE | PRIVACY_GDPR.md §6, §8 |
 | Protezione dalle password già trapelate (Supabase) | DA CONFIGURARE | PUBBLICAZIONE.md §2.3 |
 

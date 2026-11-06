@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, AtSign, LoaderCircle, Lock } from "lucide-react";
-import Link from "next/link";
+import { APP } from "@/lib/config";
 import { useActionState } from "react";
 import { completeRegistration, type RegistrationState } from "@/app/registrazione/actions";
 import { Button } from "@/components/ui/Button";
@@ -59,7 +59,7 @@ export function RegistrationForm({ email, firstName, lastName }: { email: string
       </Button>
       <p className="text-center text-xs text-muted">
         Proseguendo confermi di aver letto l&apos;
-        <Link href="/privacy" target="_blank" className="font-semibold text-ink-soft underline underline-offset-2">informativa privacy</Link>.
+        <a href={APP.privacyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink-soft underline underline-offset-2">informativa privacy</a>.
         Salviamo solo nome, cognome, classe ed email della scuola.
       </p>
     </form>

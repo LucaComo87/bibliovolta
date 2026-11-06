@@ -42,7 +42,6 @@ const PUBLIC = [
   ["/", "Homepage", { photo: true, logo: true }],
   ["/accesso", "Accesso studenti", { photo: true, logo: true }],
   ["/accesso/docenti", "Accesso docenti", { photo: "computer", logo: true }], // foto solo su schermi grandi (grafica approvata)
-  ["/privacy", "Informativa privacy", {}],
 ];
 const STUDENT = [
   ["/studente", "Area personale", { photo: true }],

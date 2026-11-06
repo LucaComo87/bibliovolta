@@ -10,6 +10,8 @@ export const APP = {
   city: "Como",
   /** riconoscimento mostrato in fondo a tutte le pagine */
   credit: "App realizzata dal prof. Luca Romanò",
+  /** informativa privacy ufficiale della scuola (anche in next.config.ts) */
+  privacyUrl: "https://liceovoltacomo.edu.it/privacy-policy/",
 } as const;
 
 export const CALENDAR = {

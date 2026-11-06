@@ -7,7 +7,7 @@ import { GoogleSignInForm } from "@/components/auth/GoogleButton";
 import { LoginError } from "@/components/auth/LoginError";
 import { SchoolLogo } from "@/components/brand/SchoolLogo";
 import { LibraryBackdrop } from "@/components/media/LibraryPhoto";
-import { AUTH, CALENDAR, ROUTES } from "@/lib/config";
+import { APP, AUTH, CALENDAR, ROUTES } from "@/lib/config";
 
 export const metadata: Metadata = { title: "Accesso studenti" };
 
@@ -45,7 +45,7 @@ export default function StudentLoginPage() {
                 <p>
                   Sono accettati solo gli indirizzi <strong className="font-semibold">@{AUTH.studentEmailDomain}</strong>.
                   Vedrai esclusivamente i tuoi dati e le tue prenotazioni.{" "}
-                  <Link href={ROUTES.privacy} className="font-semibold underline underline-offset-2">Informativa privacy</Link>
+                  <a href={APP.privacyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2">Informativa privacy</a>
                 </p>
               </div>
             </div>

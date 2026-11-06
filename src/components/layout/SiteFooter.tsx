@@ -23,7 +23,7 @@ export function SiteFooter() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-wood">Servizio</p>
           <ul className="space-y-1.5 text-muted">
             <li><Link className="hover:text-ink" href="/#informazioni">Regole di prenotazione</Link></li>
-            <li><Link className="hover:text-ink" href={ROUTES.privacy}>Informativa privacy</Link></li>
+            <li><a className="hover:text-ink" href={APP.privacyUrl} target="_blank" rel="noopener noreferrer">Informativa privacy</a></li>
             <li><Link className="hover:text-ink" href={ROUTES.status}>Stato del sistema</Link></li>
           </ul>
         </div>

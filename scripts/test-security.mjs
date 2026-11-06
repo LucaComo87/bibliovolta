@@ -179,7 +179,7 @@ async function main() {
     const cspPage = await cspCtx.newPage();
     const violations = [];
     cspPage.on("console", (m) => /Content Security Policy|Refused to/i.test(m.text()) && violations.push(m.text()));
-    for (const p of ["/", "/accesso", "/accesso/docenti", "/privacy"]) await cspPage.goto(`${APP}${p}`, { waitUntil: "networkidle" });
+    for (const p of ["/", "/accesso", "/accesso/docenti"]) await cspPage.goto(`${APP}${p}`, { waitUntil: "networkidle" });
     check("3 · Intestazioni", "nessuna violazione CSP nelle pagine pubbliche", violations.length === 0, violations.join(" | ").slice(0, 300));
     await cspCtx.close();
 
@@ -333,7 +333,7 @@ async function main() {
       "valore indicato in CHECK_SECRET": process.env.CHECK_SECRET,
     };
     const clientFiles = walk(join(ROOT, ".next-test", "static")).filter((f) => /\.(js|css|html|json)$/.test(f));
-    const htmlPages = await Promise.all(["/", "/accesso", "/accesso/docenti", "/privacy", "/stato"].map((p) => fetch(APP + p).then((r) => r.text())));
+    const htmlPages = await Promise.all(["/", "/accesso", "/accesso/docenti", "/stato"].map((p) => fetch(APP + p).then((r) => r.text())));
     const bundle = clientFiles.map((f) => readFileSync(f, "utf8")).join("\n") + htmlPages.join("\n");
     const found = Object.entries(secrets).filter(([, v]) => v && bundle.includes(v)).map(([k]) => k);
     check("6 · Password e chiavi", `nessuna chiave o password nei ${clientFiles.length} file inviati al browser`, found.length === 0, found.join(","));
@@ -350,11 +350,10 @@ async function main() {
     // =====================================================================
     // 9. Privacy: informativa e diritto di accesso
     // =====================================================================
-    const pr = await fetch(`${APP}/privacy`);
-    const prText = await pr.text();
-    check("8 · Privacy", "informativa pubblicata su /privacy (titolare, finalità, conservazione, diritti)", pr.status === 200 && ["Titolare del trattamento", "Finalità", "Tempi di conservazione", "Diritti degli interessati"].every((s) => prText.includes(s)));
+    const pr = await fetch(`${APP}/privacy`, { redirect: "manual" });
+    check("8 · Privacy", "/privacy rimanda all'informativa ufficiale della scuola", [307, 308].includes(pr.status) && pr.headers.get("location") === "https://liceovoltacomo.edu.it/privacy-policy/", `${pr.status} ${pr.headers.get("location")}`);
     const home2 = await (await fetch(`${APP}/accesso`)).text();
-    check("8 · Privacy", "informativa raggiungibile dalla pagina di accesso", home2.includes('href="/privacy"'));
+    check("8 · Privacy", "informativa ufficiale raggiungibile dalla pagina di accesso", home2.includes('href="https://liceovoltacomo.edu.it/privacy-policy/"'));
     await sPage.goto(`${APP}/studente`);
     const [dl] = await Promise.all([sPage.waitForEvent("download"), sPage.getByRole("link", { name: "Scarica i miei dati" }).click()]);
     const file = join(OUT, dl.suggestedFilename());

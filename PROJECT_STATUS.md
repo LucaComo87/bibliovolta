@@ -124,10 +124,21 @@ La numerazione segue le richieste del docente (dalla Fase 5 l'ordine è cambiato
 - La fotografia contiene volti di studenti non tutti sfocati: verificare il consenso per la pubblicazione (le inquadrature usate privilegiano volta e scaffali).
 - La sorgente della foto è 1152 px di larghezza: su schermi molto grandi risulta leggermente morbida (mitigato dall'overlay).
 
+## Pubblicazione in corso (6/11/2026)
+- ✅ Codice su GitHub: LucaComo87/bibliovolta (ramo main).
+- ✅ Supabase: progetto in regione Frankfurt, 9 migrazioni eseguite (145 giornate).
+- ✅ Google OAuth: client web creato, app «In produzione» (tipo Esterno, senza verifica del brand), collegata a Supabase.
+- ✅ Vercel: https://bibliovolta.vercel.app con variabili d'ambiente.
+- ✅ Supabase URL Configuration: Site URL e redirect /auth/callback.
+- ✅ Verificato online: un account non @stud (docente) viene rifiutato all'accesso studenti con il messaggio corretto.
+- ⏳ Account docente amministratore (invito SQL + Add user in Supabase), primo accesso e cambio password.
+- ⏳ Prova con un account studente @stud reale (account di prova chiesto al tecnico; verificare eventuale blocco delle app esterne per i minorenni).
+- ⏳ Resend (dominio, API key), automazioni Supabase Cron + pg_net, backup, approvazione informativa.
+
 ## Prossimo passo operativo
-1. Far approvare l'informativa (Dirigente + RPD) e completarne i dati in `src/lib/privacy/informativa.ts`.
-2. Seguire `docs/PUBBLICAZIONE.md` dal punto 1 al 12 (Supabase con 9 migrazioni, Google, Resend, Vercel, dominio, cron, docenti, backup).
-3. Collaudo online (§11) e aggiornamento delle voci DA VERIFICARE in `docs/CHECKLIST.md`.
+1. Creare l'account docente e accedere a /accesso/docenti.
+2. Collaudo con un account @stud di prova.
+3. Resend e automazioni (docs/PUBBLICAZIONE.md §4 e §8).
 
 ## Come avviare e verificare
 ```bash

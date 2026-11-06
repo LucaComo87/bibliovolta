@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import { AppCredit } from "@/components/layout/AppCredit";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandLockup } from "@/components/brand/BrandMark";
@@ -50,6 +51,7 @@ export default function TeacherLoginPage() {
             <TeacherLoginForm />
           </div>
         </div>
+        <AppCredit className="pb-6" />
       </main>
     </div>
   );

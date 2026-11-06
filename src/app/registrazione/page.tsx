@@ -1,4 +1,5 @@
 import { LogOut } from "lucide-react";
+import { AppCredit } from "@/components/layout/AppCredit";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AreaLoading } from "@/components/auth/AreaLoading";
@@ -33,6 +34,7 @@ export default function RegistrationPage() {
             </Suspense>
           </div>
         </div>
+        <AppCredit tone="light" />
       </div>
     </LibraryBackdrop>
   );

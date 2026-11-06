@@ -8,6 +8,8 @@ export const APP = {
   tagline: "Prenotazione dell'aula studio",
   school: "Liceo A. Volta",
   city: "Como",
+  /** riconoscimento mostrato in fondo a tutte le pagine */
+  credit: "App realizzata dal prof. Luca Romanò",
 } as const;
 
 export const CALENDAR = {

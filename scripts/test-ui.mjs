@@ -221,6 +221,7 @@ async function main() {
           check(group, "nessuno scorrimento orizzontale", info.overflow <= 1, `+${info.overflow}px ${info.offenders.join(" ")}`);
           check(group, "nessun errore nella console e nessuna risorsa mancante", errors.length === 0 && failed.length === 0, [...errors, ...failed].join(" | ").slice(0, 300));
           check(group, "tutte le immagini caricate", info.broken.length === 0, info.broken.join(", "));
+          check(group, "riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina", (await page.getByTestId("app-credit").filter({ hasText: "App realizzata dal prof. Luca Romanò" }).count()) > 0);
           if (expect.photo === true || expect.photo === dev) check(group, "fotografia originale della biblioteca del Volta", info.photo > 0, String(info.photo));
           if (expect.logo) check(group, "logo del Liceo A. Volta", info.logo);
           summary.push({ dev, role, path, label, overflow: info.overflow, errors: errors.length + failed.length, shot: `${name}.png` });

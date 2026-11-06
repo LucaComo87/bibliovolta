@@ -1,4 +1,5 @@
 import { CalendarClock, CircleCheck, CircleX, Clock3, Hourglass } from "lucide-react";
+import { AppCredit } from "@/components/layout/AppCredit";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Suspense, type ReactNode } from "react";
@@ -18,7 +19,7 @@ export const metadata: Metadata = { title: "Posto disponibile", robots: { index:
 export default function OfferPage({ params }: PageProps<"/proposta/[token]">) {
   return (
     <LibraryBackdrop overlay="login" priority position="50% 14%" className="min-h-svh">
-      <div className="mx-auto flex min-h-svh max-w-6xl items-center justify-center px-4 py-10 sm:px-6">
+      <div className="mx-auto flex min-h-svh max-w-6xl flex-col items-center justify-center gap-6 px-4 py-10 sm:px-6">
         <div className="w-full max-w-[440px] animate-rise rounded-2xl border border-white/40 bg-white/95 p-7 shadow-lift backdrop-blur-xl sm:p-9">
           <SchoolLogo size={60} className="mb-6" priority />
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-wood">Lista d&apos;attesa</p>
@@ -26,6 +27,7 @@ export default function OfferPage({ params }: PageProps<"/proposta/[token]">) {
             <OfferContent params={params} />
           </Suspense>
         </div>
+        <AppCredit tone="light" />
       </div>
     </LibraryBackdrop>
   );

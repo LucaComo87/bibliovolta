@@ -1,4 +1,5 @@
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { AppCredit } from "@/components/layout/AppCredit";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -60,6 +61,7 @@ export default function StudentLoginPage() {
         <p className="text-center text-xs text-white/60">
           Aula studio aperta dal lunedì al venerdì · {CALENDAR.opensAt}–{CALENDAR.closesAt}
         </p>
+        <AppCredit tone="light" className="-mt-2" />
       </div>
     </LibraryBackdrop>
   );

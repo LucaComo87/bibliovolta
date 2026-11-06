@@ -29,9 +29,10 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-line">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-muted sm:px-6">
-          © {APP.school} · {APP.city}
-        </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-xs text-muted sm:flex-row sm:justify-between sm:px-6">
+          <span>© {APP.school} · {APP.city}</span>
+          <span data-testid="app-credit">{APP.credit}</span>
+        </div>
       </div>
     </footer>
   );

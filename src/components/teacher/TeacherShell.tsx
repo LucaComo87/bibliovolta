@@ -1,5 +1,6 @@
 "use client";
 
+import { AppCredit } from "@/components/layout/AppCredit";
 import { BarChart3, CalendarCog, Hourglass, KeyRound, LayoutDashboard, LogOut, Megaphone, ScrollText, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -133,7 +134,7 @@ export function TeacherShell({
             </ul>
           </nav>
         </header>
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-8 sm:py-10">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-8 sm:py-10">{children}<AppCredit className="mt-12" /></main>
       </div>
     </div>
   );

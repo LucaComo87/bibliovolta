@@ -1,5 +1,6 @@
 "use client";
 
+import { AppCredit } from "@/components/layout/AppCredit";
 import { CalendarDays, Hourglass, House, LogOut, Ticket } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -84,7 +85,7 @@ export function StudentShell({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 sm:px-6 sm:pt-10 md:pb-16">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 sm:px-6 sm:pt-10 md:pb-16">{children}<AppCredit className="mt-12" /></main>
 
       {/* barra inferiore su smartphone */}
       <nav aria-label="Area studente" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-safe backdrop-blur-md md:hidden">

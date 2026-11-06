@@ -1,4 +1,5 @@
 import { ArrowLeft, LogOut } from "lucide-react";
+import { AppCredit } from "@/components/layout/AppCredit";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -45,6 +46,7 @@ export default function TeacherPasswordPage() {
             </Suspense>
           </div>
         </div>
+        <AppCredit className="pb-6" />
       </main>
     </div>
   );

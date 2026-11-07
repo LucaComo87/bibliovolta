@@ -181,3 +181,6 @@ revoke execute on function
 revoke execute on function public.shift_day_check(uuid) from authenticated;
 grant execute on function public.take_shift(uuid), public.assign_shift(uuid, text), public.remove_shift(uuid) to authenticated;
 grant select on public.supervision_shifts to authenticated;
+
+-- fa vedere subito le nuove funzioni al sito (aggiorna la cache dell'API di Supabase)
+notify pgrst, 'reload schema';

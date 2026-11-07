@@ -136,13 +136,20 @@ export async function retryAnnouncement(announcementId: string): Promise<ManageR
  * ------------------------------------------------------------------- */
 
 /** Il docente collegato prende il turno della giornata. */
+/** Messaggio chiaro se la migrazione 10 (docenti di turno) non è ancora stata eseguita su Supabase. */
+function shiftError(message: string) {
+  return /could not find the function|schema cache|supervision_shifts/i.test(message)
+    ? "I turni non sono ancora attivi: va eseguita la migrazione 10 (docenti di turno) nel SQL Editor di Supabase."
+    : clean(message);
+}
+
 export async function takeShift(schoolDayId: string): Promise<ManageResult> {
   const supabase = await teacherClient();
   if (!supabase) return DENIED;
   if (!z.string().uuid().safeParse(schoolDayId).success) return { ok: false, message: "Giornata non valida." };
   const { error } = await supabase.rpc("take_shift", { p_school_day_id: schoolDayId });
   refresh();
-  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+  return error ? { ok: false, message: shiftError(error.message) } : { ok: true };
 }
 
 /** Un amministratore assegna il turno a un docente indicato per nome e cognome. */
@@ -154,7 +161,7 @@ export async function assignShift(schoolDayId: string, teacherName: string): Pro
   if (name.length < 3 || name.length > 120) return { ok: false, message: "Scrivi nome e cognome del docente." };
   const { error } = await supabase.rpc("assign_shift", { p_school_day_id: schoolDayId, p_teacher_name: name });
   refresh();
-  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+  return error ? { ok: false, message: shiftError(error.message) } : { ok: true };
 }
 
 /** Toglie un turno (il proprio; qualsiasi per un amministratore: lo verifica il database). */
@@ -164,5 +171,5 @@ export async function removeShift(shiftId: string): Promise<ManageResult> {
   if (!z.string().uuid().safeParse(shiftId).success) return { ok: false, message: "Turno non valido." };
   const { error } = await supabase.rpc("remove_shift", { p_shift_id: shiftId });
   refresh();
-  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+  return error ? { ok: false, message: shiftError(error.message) } : { ok: true };
 }

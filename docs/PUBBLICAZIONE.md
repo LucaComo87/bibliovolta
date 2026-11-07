@@ -34,8 +34,8 @@ Servono: un account amministratore del **Google Workspace della scuola**, access
    - **Database password**: generane una lunga con il pulsante *Generate* e **conservala in un luogo sicuro** (serve per i backup).
    - **Region**: **Central EU (Frankfurt) – eu-central-1** (dati in Unione Europea, richiesto dall'informativa).
 3. Attendi la creazione (1–2 minuti). In *Project Settings → General* annota il **Reference ID** (la parte `xxxx` di `https://xxxx.supabase.co`).
-4. Applica le **9 migrazioni** di `supabase/migrations/`, nell'ordine dei nomi. Due modi:
-   - **SQL Editor** (più semplice): *SQL Editor → New query*, apri il file `20261106000001_schema.sql`, copia tutto il contenuto, incolla e premi *Run*. Ripeti per `…0002` fino a `…0009`. Ogni esecuzione deve terminare con *Success*.
+4. Applica le **10 migrazioni** di `supabase/migrations/`, nell'ordine dei nomi. Due modi:
+   - **SQL Editor** (più semplice): *SQL Editor → New query*, apri il file `20261106000001_schema.sql`, copia tutto il contenuto, incolla e premi *Run*. Ripeti per `…0002` fino a `…0010`. Ogni esecuzione deve terminare con *Success*.
    - **CLI**: dalla cartella del progetto
      ```bash
      npx supabase login

@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarCheck2, CalendarOff, CalendarRange, Hourglass, ScrollText, Send, UserCheck, Users } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CalendarOff, CalendarRange, Hourglass, ScrollText, Send, ShieldAlert, ShieldCheck, UserCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
@@ -10,13 +10,15 @@ import { StatCard } from "@/components/ui/StatCard";
 import { availabilityLevel, STATUS_LABEL } from "@/lib/calendar";
 import { formatDateTime, formatDayMedium } from "@/lib/dates";
 import { describeActivity } from "@/lib/teacher/activity";
-import type { DashboardData } from "@/lib/teacher/types";
+import type { DashboardData, ShiftMap } from "@/lib/teacher/types";
 
 const toneDot = { neutral: "bg-ink/30", gold: "bg-gold", danger: "bg-danger", success: "bg-ok" } as const;
 
 /** Dashboard docenti: numeri chiave, occupazione delle prossime giornate e ultime operazioni. */
-export function TeacherDashboard({ base, teacherName, data }: { base: string; teacherName: string; data: DashboardData }) {
+export function TeacherDashboard({ base, teacherName, data, shifts }: { base: string; teacherName: string; data: DashboardData; shifts?: ShiftMap }) {
   const t = data.todayDay;
+  const onDuty = (day: string) => (shifts?.[day] ?? []).map((x) => x.name);
+  const uncovered = shifts ? data.upcoming.filter((d) => !onDuty(d.day).length).length : 0;
   return (
     <>
       <PageHeading
@@ -37,7 +39,13 @@ export function TeacherDashboard({ base, teacherName, data }: { base: string; te
           label="Oggi"
           value={t ? (t.isOpen ? `${t.booked}/${t.capacity}` : "Chiusa") : "—"}
           icon={<UserCheck />}
-          hint={t ? (t.isOpen ? `prenotazioni · ${t.opensAt}–${t.closesAt}` : t.closureReason ?? "giornata chiusa") : "nessuna apertura oggi"}
+          hint={
+            t
+              ? t.isOpen
+                ? `prenotazioni · ${t.opensAt}–${t.closesAt}${shifts ? ` · di turno: ${onDuty(t.day).join(", ") || "nessuno"}` : ""}`
+                : t.closureReason ?? "giornata chiusa"
+              : "nessuna apertura oggi"
+          }
           className="col-span-2 lg:col-span-1"
         />
         <StatCard label="Iscritti" value={data.registeredStudents.toLocaleString("it-IT")} icon={<Users />} hint="studenti registrati" />
@@ -45,6 +53,20 @@ export function TeacherDashboard({ base, teacherName, data }: { base: string; te
         <StatCard label="Chiuse" value={data.closedDays} icon={<CalendarOff />} hint="giornate chiuse nella stagione" />
         <StatCard label="In attesa" value={data.waiting} icon={<Hourglass />} hint="studenti in lista d'attesa" />
       </div>
+
+      {uncovered > 0 && (
+        <Link
+          href={`${base}/turni`}
+          className="mt-4 flex items-center gap-3 rounded-xl border border-warn/30 bg-warn-soft px-4 py-3 text-sm font-medium text-warn hover:border-warn/60"
+          data-testid="uncovered-alert"
+        >
+          <ShieldAlert className="size-5 shrink-0" />
+          <span>
+            {uncovered === 1 ? "1 delle prossime giornate non ha" : `${uncovered} delle prossime giornate non hanno`} un docente di turno.{" "}
+            <span className="underline underline-offset-2">Organizza i turni</span>
+          </span>
+        </Link>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <Card>
@@ -95,6 +117,12 @@ export function TeacherDashboard({ base, teacherName, data }: { base: string; te
                   {formatDayMedium(d.day)}
                   {d.day === data.today && <Badge tone="blue" className="ml-2">Oggi</Badge>}
                   <span className="block text-xs font-normal text-muted">{d.opensAt}–{d.closesAt}</span>
+                  {shifts && (
+                    <span className={`flex items-center gap-1 text-xs font-medium ${onDuty(d.day).length ? "text-ink-soft" : "text-warn"}`} data-testid="dashboard-shift">
+                      <ShieldCheck className="size-3.5 shrink-0" />
+                      {onDuty(d.day).length ? `Di turno: ${onDuty(d.day).join(", ")}` : "Nessun docente di turno"}
+                    </span>
+                  )}
                 </p>
                 <div className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto">
                   <SeatMeter booked={d.booked + d.held} capacity={d.capacity} size="sm" showLabel={false} />

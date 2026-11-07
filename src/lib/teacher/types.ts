@@ -32,6 +32,8 @@ export type RosterData = {
   rows: RosterRow[];
   cancelled: CancelledRow[];
   waitlist: RosterWaitRow[];
+  /** docenti di turno della giornata */
+  supervisors: string[];
 };
 
 export type AnnouncementSummary = {
@@ -71,3 +73,10 @@ export type DashboardData = {
   chart: { label: string; value: number }[];
   activity: ActivityEntry[];
 };
+
+/** Docente di turno in una giornata, come lo vede l'area docenti. */
+export type ShiftView = { id: string; name: string; mine: boolean; registered: boolean };
+/** Turni per giornata (chiave: data YYYY-MM-DD). */
+export type ShiftMap = Record<string, ShiftView[]>;
+/** Chi sta usando l'area docenti: serve per mostrare le azioni sui turni. */
+export type ShiftViewer = { id: string; isAdmin: boolean; maxPerDay: number };

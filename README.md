@@ -55,7 +55,7 @@ Supabase (regione UE)
 | `src/app/` | pagine e route (accesso, studente, docenti, proposta, privacy, stato, API) |
 | `src/components/` | interfaccia: `ui/` (componenti base), `calendar/`, `student/`, `teacher/`, `waitlist/`, `brand/`, `media/`, `layout/` |
 | `src/lib/` | logica: `auth/`, `supabase/`, `bookings/`, `waitlist/`, `teacher/`, `email/`, `privacy/`, date e configurazione |
-| `supabase/migrations/` | 9 migrazioni SQL (schema, funzioni, RLS, calendario, auth, prenotazioni, lista d'attesa, dashboard docenti, privacy) |
+| `supabase/migrations/` | 10 migrazioni SQL (schema, funzioni, RLS, calendario, auth, prenotazioni, lista d'attesa, dashboard docenti, privacy, docenti di turno) |
 | `scripts/` | amministrazione (docenti, privacy, backup) e test (database, end-to-end, sicurezza, grafica) |
 | `docs/` | documentazione |
 
@@ -72,6 +72,7 @@ Supabase (regione UE)
 | `seat_offers` | proposte di posto: impronta del link, scadenza, esito |
 | `announcements` / `announcement_deliveries` | comunicazioni dei docenti e esito dell'email per ogni destinatario |
 | `notification_outbox` | coda delle email (solo server) |
+| `supervision_shifts` | docenti di turno: chi sorveglia l'aula studio in ogni giornata |
 | `audit_log` | registro delle operazioni (docenti in forma leggibile, tecnico senza dati personali) |
 | `auth_attempts` | tentativi di accesso dei docenti (protezione dai tentativi ripetuti) |
 
@@ -101,6 +102,7 @@ Funzioni principali: `book_seat`, `cancel_booking`, `my_bookings`, `get_day_avai
 - **Dashboard**: prenotazioni di oggi, iscritti, giornate complete e chiuse, studenti in lista d'attesa, grafico delle prossime giornate, ultime operazioni, «INVIA COMUNICAZIONE AGLI ISCRITTI».
 - **Calendario**: vista mensile; per giornata iscritti, posti liberi, lista; chiusura con motivo e **conferma** con scelta della comunicazione (automatica, personalizzata, nessuna); riapertura; orario e capienza della singola giornata; orario generale.
 - **Iscritti**: elenco per giornata con nome, cognome, classe, email, data e ora; ricerca, filtro per classe, ordinamento; esportazione **CSV** ed **Excel**; annullamento manuale con motivo ed email facoltativa.
+- **Docenti di turno**: per ogni giornata il responsabile della sorveglianza. Ogni docente prende o lascia il proprio turno (dal calendario o dalla pagina **Turni**); un amministratore assegna il turno a qualsiasi docente scrivendone nome e cognome. La dashboard segnala le giornate scoperte; elenco iscritti ed Excel riportano chi è di turno.
 - **Lista d'attesa**: code per giornata, proposte aperte e scadute, rimozione, sospensione, tempo per confermare.
 - **Comunicazioni**: email ai prenotati e/o alla lista d'attesa di una giornata, con modelli, anteprima, conferma del numero di destinatari e storico con l'esito di ogni invio e «Riprova l'invio».
 - **Statistiche**: totale, media giornaliera, occupazione, giornate più frequentate, classi più rappresentate, andamento settimanale.
@@ -110,7 +112,7 @@ Funzioni principali: `book_seat`, `cancel_booking`, `my_bookings`, `get_day_avai
 
 Riepilogo (dettagli in [`docs/PUBBLICAZIONE.md`](docs/PUBBLICAZIONE.md)):
 
-1. **Supabase**: progetto in regione UE, 9 migrazioni, URL di reindirizzamento, provider Google ed Email, chiavi API.
+1. **Supabase**: progetto in regione UE, 10 migrazioni, URL di reindirizzamento, provider Google ed Email, chiavi API.
 2. **Google Cloud**: schermata di consenso (Interno se possibile), client OAuth «Applicazione web» con il callback di Supabase.
 3. **Resend**: dominio mittente verificato (SPF, DKIM, DMARC), API key.
 4. **Variabili d'ambiente** (`.env.example`): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `CRON_SECRET`, `TEACHER_INITIAL_PASSWORD`, `ENABLE_UI_PREVIEW=false`.

@@ -83,14 +83,15 @@ export async function getRoster(supabase: Client, requestedDay: string | null): 
     days[0]?.day ??
     null;
   const list = days.map((d) => ({ day: d.day, booked: d.booked, isOpen: d.is_open }));
-  if (!chosen) return { day: null, days: list, rows: [], cancelled: [], waitlist: [] };
+  if (!chosen) return { day: null, days: list, rows: [], cancelled: [], waitlist: [], supervisors: [] };
 
   const { data: dayRow } = await supabase.from("school_days").select("id, day, capacity, opens_at, closes_at, is_open, closure_reason").eq("day", chosen).single();
-  if (!dayRow) return { day: null, days: list, rows: [], cancelled: [], waitlist: [] };
+  if (!dayRow) return { day: null, days: list, rows: [], cancelled: [], waitlist: [], supervisors: [] };
 
-  const [{ data: bookings }, { data: waits }] = await Promise.all([
+  const [{ data: bookings }, { data: waits }, { data: shiftRows }] = await Promise.all([
     supabase.from("bookings").select("id, student_id, status, source, created_at, cancelled_at, cancelled_by, cancel_reason").eq("school_day_id", dayRow.id).order("created_at"),
     supabase.from("waitlist_entries").select("id, student_id, status, joined_at, queue_seq").eq("school_day_id", dayRow.id).in("status", ["waiting", "offered"]).order("queue_seq"),
+    supabase.from("supervision_shifts").select("teacher_name").eq("school_day_id", dayRow.id).order("created_at"),
   ]);
   const ids = [...new Set([...(bookings ?? []).map((b) => b.student_id), ...(waits ?? []).map((w) => w.student_id)])];
   const { data: students } = ids.length
@@ -117,6 +118,7 @@ export async function getRoster(supabase: Client, requestedDay: string | null): 
       isOpen: dayRow.is_open, closureReason: dayRow.closure_reason,
     },
     days: list,
+    supervisors: (shiftRows ?? []).map((r) => r.teacher_name),
     rows: (bookings ?? []).filter((b) => b.status === "confirmed").map(toRow),
     cancelled: (bookings ?? [])
       .filter((b) => b.status === "cancelled")

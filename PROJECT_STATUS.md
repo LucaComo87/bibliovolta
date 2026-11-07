@@ -1,6 +1,6 @@
 # BIBLIOVOLTA · PROJECT_STATUS
 
-_Ultimo aggiornamento: 6 novembre 2026 — fine Fase 7 (collaudo, sicurezza, privacy, pubblicazione)_
+_Ultimo aggiornamento: 7 novembre 2026 — docenti di turno; sito pubblicato su https://bibliovolta.vercel.app_
 
 ## Obiettivo
 Web app reale per prenotare i posti dell'aula studio del Liceo A. Volta di Como: 50 posti/giorno, lun–ven 14:15–16:30, dal 16/11/2026 al 04/06/2027. Studenti con Google (`@stud.liceovoltacomo.edu.it`), docenti con email e password. Annullamento fino a 24 ore prima.
@@ -126,7 +126,7 @@ La numerazione segue le richieste del docente (dalla Fase 5 l'ordine è cambiato
 
 ## Pubblicazione in corso (6/11/2026)
 - ✅ Codice su GitHub: LucaComo87/bibliovolta (ramo main).
-- ✅ Supabase: progetto in regione Frankfurt, 9 migrazioni eseguite (145 giornate).
+- ✅ Supabase: progetto in regione Frankfurt, 9 migrazioni eseguite (145 giornate). ⏳ Migrazione 10 (docenti di turno) da eseguire.
 - ✅ Google OAuth: client web creato, app «In produzione» (tipo Esterno, senza verifica del brand), collegata a Supabase.
 - ✅ Vercel: https://bibliovolta.vercel.app con variabili d'ambiente.
 - ✅ Supabase URL Configuration: Site URL e redirect /auth/callback.
@@ -138,6 +138,11 @@ La numerazione segue le richieste del docente (dalla Fase 5 l'ordine è cambiato
 ## Informativa privacy (7/11/2026)
 - Su richiesta: la pagina `/privacy` di BIBLIOVOLTA è stata tolta; `/privacy` (link usato anche da Google OAuth) e tutti i link del sito portano all'informativa ufficiale della scuola, https://liceovoltacomo.edu.it/privacy-policy/ (`APP.privacyUrl` in `src/lib/config.ts` e `next.config.ts`).
 - Quell'informativa non cita BIBLIOVOLTA né i suoi fornitori e dichiara che non ci sono trasferimenti extra UE: va integrata dalla scuola (testo proposto in `docs/INFORMATIVA_PRIVACY.md`).
+
+## Docenti di turno (7/11/2026)
+- Nuova migrazione 10 `20261107000010_supervision_shifts.sql` (da eseguire nel SQL Editor di Supabase): turni di sorveglianza per giornata.
+- Pagina **Turni** (`/docenti/turni`) e riquadro «Docenti di turno» nel calendario: ogni docente prende/lascia il proprio turno; l'amministratore assegna qualsiasi docente per nome e cognome e toglie qualsiasi turno. Dashboard con chi è di turno e avviso giornate scoperte; elenco iscritti ed Excel con i docenti di turno; registro `docente.turno_*`.
+- Test: campagna completa `test:all` 846/846 (`db:test` 213/213, `test:teacher` 95/95, `test:security` 56/56 con le nuove funzioni e tabella, `test:ui` 298/298 con la pagina Turni).
 
 ## Prossimo passo operativo
 1. Creare l'account docente e accedere a /accesso/docenti.

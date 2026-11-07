@@ -1,6 +1,6 @@
 # BIBLIOVOLTA · Checklist finale
 
-_Aggiornata al 6 novembre 2026, dopo il collaudo completo `npm run test:all` (esito in [`TEST_REPORT.md`](TEST_REPORT.md))._
+_Aggiornata al 7 novembre 2026, dopo il collaudo completo `npm run test:all` (esito in [`TEST_REPORT.md`](TEST_REPORT.md))._
 
 **Legenda**
 - **COMPLETATO** — realizzato e verificato da test automatici che usano la build di produzione e un vero database PostgreSQL con Supabase Auth.
@@ -61,6 +61,9 @@ Nessuna voce è segnata COMPLETATO senza una verifica automatica superata; la co
 | Statistiche (totale, media, occupazione, giornate, classi) confrontate con il database | COMPLETATO | test:teacher, db:test |
 | Registro delle operazioni con filtri e ricerca | COMPLETATO | test:teacher |
 | Gestione lista d'attesa (rimozione, sospensione, tempo per confermare) | COMPLETATO | test:waitlist |
+| Docenti di turno: ogni docente prende o lascia il proprio turno | COMPLETATO | test:teacher, db:test |
+| Docenti di turno: l'amministratore assegna il turno a qualsiasi docente per nome e cognome | COMPLETATO | test:teacher, db:test |
+| Docenti di turno in dashboard (giornate scoperte), elenco iscritti ed Excel | COMPLETATO | test:teacher |
 | Creazione degli account dei docenti reali | DA CONFIGURARE | `npm run teacher:create` |
 
 ## Sicurezza e privacy
@@ -106,7 +109,7 @@ Nessuna voce è segnata COMPLETATO senza una verifica automatica superata; la co
 | Funzionalità | Stato | Verifica |
 |---|---|---|
 | Build di produzione senza errori; tipi e lint | COMPLETATO | test:all |
-| Progetto Supabase (regione UE) e 9 migrazioni | DA CONFIGURARE | PUBBLICAZIONE.md §1 |
+| Progetto Supabase (regione UE) e 10 migrazioni | COMPLETATO (migrazione 10 da eseguire) | PUBBLICAZIONE.md §1 |
 | Google OAuth (progetto, consenso, client) | DA CONFIGURARE | PUBBLICAZIONE.md §3 |
 | Resend (dominio verificato SPF/DKIM/DMARC, API key) | DA CONFIGURARE | PUBBLICAZIONE.md §4 |
 | Variabili d'ambiente su Vercel | DA CONFIGURARE | PUBBLICAZIONE.md §5 |

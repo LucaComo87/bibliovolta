@@ -7,6 +7,7 @@ export const ACTIVITY_CATEGORIES = {
   prenotazioni: "Annullamenti manuali",
   comunicazioni: "Comunicazioni",
   impostazioni: "Impostazioni e lista d'attesa",
+  turni: "Docenti di turno",
 } as const;
 export type ActivityCategory = keyof typeof ACTIVITY_CATEGORIES;
 
@@ -75,6 +76,12 @@ export function describeActivity(e: ActivityEntry): DescribedActivity {
       return { category: "impostazioni", tone: "neutral", title: `Lista d'attesa riattivata per ${day}` };
     case "lista_rimozione":
       return { category: "impostazioni", tone: "neutral", title: `${s(d.studente)} rimosso dalla lista d'attesa`, detail: day };
+    case "turno_preso":
+      return { category: "turni", tone: "success", title: `${s(d.docente)} è di turno ${day}` };
+    case "turno_assegnato":
+      return { category: "turni", tone: "success", title: `Turno di ${day} assegnato a ${s(d.docente)}` };
+    case "turno_rimosso":
+      return { category: "turni", tone: "neutral", title: d.proprio ? `${s(d.docente)} ha lasciato il turno di ${day}` : `Tolto il turno di ${s(d.docente)} per ${day}` };
     default:
       return { category: "impostazioni", tone: "neutral", title: e.action.replace(/_/g, " ") };
   }

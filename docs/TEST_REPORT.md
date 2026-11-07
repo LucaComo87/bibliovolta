@@ -1,21 +1,21 @@
 # BIBLIOVOLTA · Rapporto di collaudo
 
-_Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: build di produzione Next.js, PostgreSQL 17 + Supabase Auth + PostgREST in locale, Chrome, Google e Resend sostituiti da servizi di prova._
+_Eseguito il 7 novembre 2026 alle ore 10:00 con `npm run test:all`. Ambiente: build di produzione Next.js, PostgreSQL 17 + Supabase Auth + PostgREST in locale, Chrome, Google e Resend sostituiti da servizi di prova._
 
 | Prova | Esito | Verifiche | Durata |
 |---|---|---|---|
 | Controllo dei tipi TypeScript | ✅ superata | — | 2 s |
-| Lint (ESLint) | ✅ superata | — | 7 s |
-| Database: migrazioni, regole, permessi, privacy | ✅ superata | 191/191 | 3 s |
-| Build di produzione | ✅ superata | — | 5 s |
-| Autenticazione e registrazione | ✅ superata | 70/70 | 62 s |
-| Calendario e prenotazioni | ✅ superata | 43/43 | 25 s |
-| Lista d'attesa automatica | ✅ superata | 71/71 | 25 s |
-| Dashboard docenti e comunicazioni | ✅ superata | 77/77 | 32 s |
-| Sicurezza e privacy | ✅ superata | 56/56 | 25 s |
-| Grafica su smartphone, tablet e computer | ✅ superata | 253/253 | 125 s |
+| Lint (ESLint) | ✅ superata | — | 6 s |
+| Database: migrazioni, regole, permessi, privacy | ✅ superata | 213/213 | 2 s |
+| Build di produzione | ✅ superata | — | 4 s |
+| Autenticazione e registrazione | ✅ superata | 70/70 | 54 s |
+| Calendario e prenotazioni | ✅ superata | 43/43 | 24 s |
+| Lista d'attesa automatica | ✅ superata | 71/71 | 23 s |
+| Dashboard docenti e comunicazioni | ✅ superata | 95/95 | 37 s |
+| Sicurezza e privacy | ✅ superata | 56/56 | 20 s |
+| Grafica su smartphone, tablet e computer | ✅ superata | 298/298 | 121 s |
 
-**Totale: 761/761 verifiche superate.**
+**Totale: 846/846 verifiche superate.**
 
 ## Database: migrazioni, regole, permessi, privacy
 
@@ -28,6 +28,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ migrazione 20261106000007_waitlist.sql
 - ✅ migrazione 20261106000008_teacher_dashboard.sql
 - ✅ migrazione 20261106000009_privacy_retention.sql
+- ✅ migrazione 20261107000010_supervision_shifts.sql
 - ✅ calendario: prima giornata 2026-11-16
 - ✅ calendario: ultima giornata 2027-06-04
 - ✅ calendario: nessun sabato/domenica
@@ -210,6 +211,27 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ conservazione: profili inattivi da oltre 12 mesi cancellati
 - ✅ conservazione: l'operazione è registrata senza dati personali
 - ✅ conservazione: le giornate del calendario restano
+- ✅ turni: un docente prende il turno di una giornata
+- ✅ turni: il turno porta il suo nome
+- ✅ turni: non si può prendere due volte lo stesso turno
+- ✅ turni: un docente non amministratore non assegna turni ad altri
+- ✅ turni: nessuna scrittura diretta nella tabella
+- ✅ turni: l'amministratore assegna un docente scrivendo nome e cognome
+- ✅ turni: nome ripulito e non collegato ad account se il docente non è registrato
+- ✅ turni: stesso nome due volte rifiutato (maiuscole e spazi ignorati)
+- ✅ turni: un docente già di turno non può essere riassegnato
+- ✅ turni: nome troppo corto rifiutato
+- ✅ turni: al massimo 3 docenti di turno per giornata
+- ✅ turni: se il nome corrisponde a un docente registrato, il turno è collegato al suo account
+- ✅ turni: un docente può lasciare il proprio turno
+- ✅ turni: un docente non può togliere il turno di un altro
+- ✅ turni: i docenti vedono tutti i turni
+- ✅ turni: l'amministratore può togliere qualsiasi turno
+- ✅ turni: gli studenti non vedono i turni
+- ✅ turni: gli studenti non possono prendere turni
+- ✅ turni: i visitatori anonimi non possono fare nulla
+- ✅ turni: ogni operazione è nel registro
+- ✅ turni: niente turni nelle giornate passate
 
 ## Autenticazione e registrazione
 
@@ -694,6 +716,30 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ descrizioni leggibili con autore
 - ✅ filtro per tipo di operazione
 - ✅ ricerca nel registro
+
+**10 · Turni**
+
+- ✅ la giornata mostra «Nessun docente di turno»
+- ✅ il docente prende il turno dal calendario
+- ✅ turno salvato nel database e collegato all'account
+- ✅ l'amministratore assegna il turno scrivendo nome e cognome
+- ✅ nome salvato pulito, senza account collegato
+- ✅ lo stesso docente non può essere assegnato due volte
+- ✅ la dashboard mostra chi è di turno
+- ✅ la dashboard segnala le giornate senza docente di turno
+- ✅ l'elenco iscritti indica i docenti di turno
+- ✅ anche il file Excel riporta i docenti di turno
+- ✅ pagina Turni con i miei turni
+- ✅ filtro «solo giornate scoperte» esclude quelle coperte
+- ✅ il docente lascia il proprio turno
+- ✅ un docente non amministratore non ha il campo per assegnare altri
+- ✅ e non può togliere il turno di un collega
+- ✅ un docente non amministratore prende il proprio turno
+- ✅ anche chiamando direttamente il database un non amministratore non assegna turni
+- ✅ turni presi, assegnati e lasciati finiscono nel registro
+
+**7 · Registro**
+
 - ✅ cambio dell'orario generale registrato
 
 **9 · Dati reali**
@@ -735,7 +781,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 
 **4 · Permessi**
 
-- ✅ uno studente non può usare nessuna delle 7 funzioni dei docenti
+- ✅ uno studente non può usare nessuna delle 9 funzioni dei docenti
 - ✅ le 8 funzioni interne (email, pulizia, cancellazione) sono negate a studenti, docenti e anonimi
 - ✅ B esiste ancora dopo i tentativi di cancellazione
 - ✅ uno studente non può annullare la prenotazione di un altro
@@ -757,7 +803,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 
 **7 · Database**
 
-- ✅ un visitatore anonimo non legge nessuna delle 11 tabelle con dati
+- ✅ un visitatore anonimo non legge nessuna delle 12 tabelle con dati
 - ✅ uno studente legge solo le proprie righe (profilo, prenotazioni, liste, proposte, comunicazioni)
 - ✅ filtrare per l'id di un altro studente non restituisce nulla
 - ✅ il calendario degli studenti mostra solo numeri, nessun nome o email
@@ -785,15 +831,15 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 
 **6 · Password e chiavi**
 
-- ✅ nessuna chiave o password nei 44 file inviati al browser
+- ✅ nessuna chiave o password nei 47 file inviati al browser
 - ✅ nessuna password o chiave scritta nel codice sorgente
 - ✅ .env.example senza valori segreti
 - ✅ .env* esclusi dal versionamento
 
 **8 · Privacy**
 
-- ✅ informativa pubblicata su /privacy (titolare, finalità, conservazione, diritti)
-- ✅ informativa raggiungibile dalla pagina di accesso
+- ✅ /privacy rimanda all'informativa ufficiale della scuola
+- ✅ informativa ufficiale raggiungibile dalla pagina di accesso
 - ✅ lo studente scarica i propri dati in un file
 - ✅ il file non contiene dati di altri studenti
 - ✅ solo cookie tecnici (sessione), nessun cookie di terze parti
@@ -820,6 +866,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -830,6 +877,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -840,15 +888,8 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ logo del Liceo A. Volta
-
-**Informativa privacy · smartphone**
-
-- ✅ pagina aperta con il ruolo giusto
-- ✅ titolo principale presente
-- ✅ nessuno scorrimento orizzontale
-- ✅ nessun errore nella console e nessuna risorsa mancante
-- ✅ tutte le immagini caricate
 
 **Area personale · smartphone**
 
@@ -857,6 +898,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 
 **Calendario studenti · smartphone**
@@ -866,6 +908,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie prenotazioni · smartphone**
 
@@ -874,6 +917,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie liste d'attesa · smartphone**
 
@@ -882,6 +926,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione studente · smartphone**
 
@@ -894,6 +939,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Calendario docenti · smartphone**
 
@@ -902,6 +948,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Lista d'attesa (docenti) · smartphone**
 
@@ -910,6 +957,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Iscritti · smartphone**
 
@@ -918,6 +966,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Comunicazioni · smartphone**
 
@@ -926,6 +975,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Statistiche · smartphone**
 
@@ -934,6 +984,16 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
+
+**Turni di sorveglianza · smartphone**
+
+- ✅ pagina aperta con il ruolo giusto
+- ✅ titolo principale presente
+- ✅ nessuno scorrimento orizzontale
+- ✅ nessun errore nella console e nessuna risorsa mancante
+- ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Registro · smartphone**
 
@@ -942,6 +1002,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione docente · smartphone**
 
@@ -954,6 +1015,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -964,6 +1026,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -974,15 +1037,8 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ logo del Liceo A. Volta
-
-**Informativa privacy · tablet**
-
-- ✅ pagina aperta con il ruolo giusto
-- ✅ titolo principale presente
-- ✅ nessuno scorrimento orizzontale
-- ✅ nessun errore nella console e nessuna risorsa mancante
-- ✅ tutte le immagini caricate
 
 **Area personale · tablet**
 
@@ -991,6 +1047,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 
 **Calendario studenti · tablet**
@@ -1000,6 +1057,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie prenotazioni · tablet**
 
@@ -1008,6 +1066,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie liste d'attesa · tablet**
 
@@ -1016,6 +1075,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione studente · tablet**
 
@@ -1028,6 +1088,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Calendario docenti · tablet**
 
@@ -1036,6 +1097,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Lista d'attesa (docenti) · tablet**
 
@@ -1044,6 +1106,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Iscritti · tablet**
 
@@ -1052,6 +1115,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Comunicazioni · tablet**
 
@@ -1060,6 +1124,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Statistiche · tablet**
 
@@ -1068,6 +1133,16 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
+
+**Turni di sorveglianza · tablet**
+
+- ✅ pagina aperta con il ruolo giusto
+- ✅ titolo principale presente
+- ✅ nessuno scorrimento orizzontale
+- ✅ nessun errore nella console e nessuna risorsa mancante
+- ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Registro · tablet**
 
@@ -1076,6 +1151,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione docente · tablet**
 
@@ -1088,6 +1164,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -1098,6 +1175,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
 
@@ -1108,16 +1186,9 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 - ✅ logo del Liceo A. Volta
-
-**Informativa privacy · computer**
-
-- ✅ pagina aperta con il ruolo giusto
-- ✅ titolo principale presente
-- ✅ nessuno scorrimento orizzontale
-- ✅ nessun errore nella console e nessuna risorsa mancante
-- ✅ tutte le immagini caricate
 
 **Area personale · computer**
 
@@ -1126,6 +1197,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 - ✅ fotografia originale della biblioteca del Volta
 
 **Calendario studenti · computer**
@@ -1135,6 +1207,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie prenotazioni · computer**
 
@@ -1143,6 +1216,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Le mie liste d'attesa · computer**
 
@@ -1151,6 +1225,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione studente · computer**
 
@@ -1163,6 +1238,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Calendario docenti · computer**
 
@@ -1171,6 +1247,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Lista d'attesa (docenti) · computer**
 
@@ -1179,6 +1256,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Iscritti · computer**
 
@@ -1187,6 +1265,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Comunicazioni · computer**
 
@@ -1195,6 +1274,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Statistiche · computer**
 
@@ -1203,6 +1283,16 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
+
+**Turni di sorveglianza · computer**
+
+- ✅ pagina aperta con il ruolo giusto
+- ✅ titolo principale presente
+- ✅ nessuno scorrimento orizzontale
+- ✅ nessun errore nella console e nessuna risorsa mancante
+- ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Registro · computer**
 
@@ -1211,6 +1301,7 @@ _Eseguito il 6 novembre 2026 alle ore 17:54 con `npm run test:all`. Ambiente: bu
 - ✅ nessuno scorrimento orizzontale
 - ✅ nessun errore nella console e nessuna risorsa mancante
 - ✅ tutte le immagini caricate
+- ✅ riconoscimento «App realizzata dal prof. Luca Romanò» in fondo alla pagina
 
 **Navigazione docente · computer**
 

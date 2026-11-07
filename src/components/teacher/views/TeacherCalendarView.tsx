@@ -23,6 +23,8 @@ import { Toast } from "@/components/ui/Toast";
 import type { CalendarDay } from "@/lib/calendar";
 import { formatDayLong, formatDayMedium } from "@/lib/dates";
 import { cn } from "@/lib/cn";
+import type { ShiftMap, ShiftViewer } from "@/lib/teacher/types";
+import { ShiftPanel, type ShiftActions } from "@/components/teacher/ShiftPanel";
 
 export type ClosureNotice = {
   notice: "default" | "custom" | "none";
@@ -47,6 +49,9 @@ export function TeacherCalendarView({
   days: initialDays,
   onSave,
   aside,
+  shifts,
+  viewer,
+  shiftActions,
 }: {
   base: string;
   today: string;
@@ -54,6 +59,10 @@ export function TeacherCalendarView({
   /** salvataggio reale; senza, la modifica resta solo nell'anteprima */
   onSave?: (day: CalendarDay, notice: ClosureNotice) => Promise<SaveDayResult>;
   aside?: React.ReactNode;
+  /** docenti di turno per giornata */
+  shifts?: ShiftMap;
+  viewer?: ShiftViewer;
+  shiftActions?: ShiftActions;
 }) {
   const [days, setDays] = useState(initialDays);
   const [selected, setSelected] = useState<string>(
@@ -131,6 +140,17 @@ export function TeacherCalendarView({
           today={today}
           day={day}
           onSave={save}
+          shiftPanel={
+            shifts && day.id ? (
+              <ShiftPanel
+                schoolDayId={day.id}
+                shifts={shifts[day.day] ?? []}
+                viewer={viewer}
+                isPast={day.day < today}
+                actions={shiftActions}
+              />
+            ) : null
+          }
         />
       </div>
       {toast && (
@@ -171,11 +191,13 @@ function DayEditor({
   today,
   day,
   onSave,
+  shiftPanel,
 }: {
   base: string;
   today: string;
   day: CalendarDay;
   onSave: (d: CalendarDay, n: ClosureNotice) => Promise<boolean>;
+  shiftPanel?: React.ReactNode;
 }) {
   const [draft, setDraft] = useState(day);
   const [saving, setSaving] = useState(false);
@@ -273,6 +295,8 @@ function DayEditor({
           )}
         </div>
       )}
+
+      {shiftPanel && <div className="mt-4">{shiftPanel}</div>}
 
       <div className="mt-5 space-y-4">
         <div className="rounded-xl border border-line p-3.5">

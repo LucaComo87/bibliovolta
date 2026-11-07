@@ -26,9 +26,20 @@ export type AppSettings = {
   student_email_domain: string;
   school_timezone: string;
   offer_minutes: number;
+  max_shifts_per_day: number;
   updated_at: string;
   updated_by: string | null;
 }
+
+/** Docente di turno (sorveglianza dell'aula studio in una giornata). */
+export type SupervisionShift = {
+  id: string;
+  school_day_id: string;
+  teacher_id: string | null;
+  teacher_name: string;
+  assigned_by: string | null;
+  created_at: string;
+};
 
 export type Student = Timestamps & {
   id: string;
@@ -282,6 +293,7 @@ export type Database = {
         "email_status" | "email_provider_id" | "email_error" | "sent_at" | "read_at"
       >;
       audit_log: TableDef<AuditLogEntry, keyof AuditLogEntry>;
+      supervision_shifts: TableDef<SupervisionShift, "teacher_id" | "assigned_by">;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -342,6 +354,9 @@ export type Database = {
       };
       teacher_cancel_booking: { Args: { p_booking_id: string; p_reason: string; p_notify?: boolean }; Returns: Booking };
       teacher_stats: { Args: Record<string, never>; Returns: TeacherStatsJson };
+      take_shift: { Args: { p_school_day_id: string }; Returns: string };
+      assign_shift: { Args: { p_school_day_id: string; p_teacher_name: string }; Returns: string };
+      remove_shift: { Args: { p_shift_id: string }; Returns: undefined };
       export_my_data: { Args: Record<string, never>; Returns: Json };
       erase_student: { Args: { p_student_id: string }; Returns: Json };
       purge_expired_data: { Args: Record<string, never>; Returns: Json };

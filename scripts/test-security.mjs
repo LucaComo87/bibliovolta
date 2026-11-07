@@ -196,6 +196,8 @@ async function main() {
       ["set_opening_hours", { p_opens_at: "08:00", p_closes_at: "09:00" }],
       ["set_offer_minutes", { p_minutes: 15 }],
       ["announcement_recipients_count", { p_school_day_id: await dayId(D1), p_include_bookings: true, p_include_waitlist: true }],
+      ["take_shift", { p_school_day_id: await dayId(D1) }],
+      ["assign_shift", { p_school_day_id: await dayId(D1), p_teacher_name: "Finto Docente" }],
     ];
     let denied = 0;
     for (const [fn, body] of teacherOnly) if ((await rpc(tokA, fn, body)).status >= 400) denied++;
@@ -245,7 +247,7 @@ async function main() {
     // =====================================================================
     // 6. Database: ogni tabella, letta da anonimo e da studente
     // =====================================================================
-    const tables = ["students", "teachers", "bookings", "waitlist_entries", "seat_offers", "announcements", "announcement_deliveries", "audit_log", "notification_outbox", "auth_attempts", "teacher_invitations"];
+    const tables = ["students", "teachers", "bookings", "waitlist_entries", "seat_offers", "announcements", "announcement_deliveries", "audit_log", "notification_outbox", "auth_attempts", "teacher_invitations", "supervision_shifts"];
     const anonLeaks = [];
     for (const tb of tables) {
       const r = await rows(null, `${tb}?select=*`);

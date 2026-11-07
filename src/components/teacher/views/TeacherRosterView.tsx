@@ -121,7 +121,12 @@ export function TeacherRosterView({
           ) : (
             <p className="text-sm text-muted"><Badge tone="danger" className="mr-2">Chiusa</Badge>{day.closureReason}</p>
           )}
-          <p className="mt-1 text-xs text-muted">Orario {day.opensAt}–{day.closesAt}</p>
+          <p className="mt-1 text-xs text-muted">
+            Orario {day.opensAt}–{day.closesAt} ·{" "}
+            <span className={data.supervisors.length ? "font-medium text-ink-soft" : "font-medium text-warn"} data-testid="roster-supervisors">
+              {data.supervisors.length ? `Di turno: ${data.supervisors.join(", ")}` : "Nessun docente di turno"}
+            </span>
+          </p>
         </div>
       </div>
 

@@ -424,6 +424,76 @@ async function main() {
     await page.fill("#log-search", "");
     await page.screenshot({ path: join(SHOTS, "registro.png"), fullPage: true });
 
+    // =====================================================================
+    // 10. Docenti di turno (sorveglianza)
+    // =====================================================================
+    await page.goto(`${APP}/docenti/calendario`);
+    await openDay(page, D1);
+    await settle(page);
+    const panel = page.getByTestId("shift-panel");
+    check("10 · Turni", "la giornata mostra «Nessun docente di turno»", (await panel.innerText()).includes("Nessun docente di turno"));
+    await panel.getByRole("button", { name: "Prendo io il turno" }).click();
+    check("10 · Turni", "il docente prende il turno dal calendario", await panel.getByTestId("shift-item").filter({ hasText: "Anna Rossi" }).filter({ hasText: "Tu" }).waitFor({ timeout: 10000 }).then(() => true, () => false));
+    const shiftRow = async (name) => one("select s.teacher_id, s.teacher_name from public.supervision_shifts s join public.school_days d on d.id = s.school_day_id where d.day = $1 and s.teacher_name = $2", [D1, name]);
+    check("10 · Turni", "turno salvato nel database e collegato all'account", (await shiftRow("Anna Rossi"))?.teacher_id === teacherId);
+    await panel.locator("input").fill("Mario   Bianchi");
+    await panel.getByRole("button", { name: "Assegna" }).click();
+    check("10 · Turni", "l'amministratore assegna il turno scrivendo nome e cognome", await panel.getByTestId("shift-item").filter({ hasText: "Mario Bianchi" }).waitFor({ timeout: 10000 }).then(() => true, () => false));
+    check("10 · Turni", "nome salvato pulito, senza account collegato", (await shiftRow("Mario Bianchi"))?.teacher_id === null);
+    await panel.locator("input").fill("mario bianchi");
+    await panel.getByRole("button", { name: "Assegna" }).click();
+    check("10 · Turni", "lo stesso docente non può essere assegnato due volte", await panel.getByRole("alert").filter({ hasText: "già di turno" }).waitFor({ timeout: 10000 }).then(() => true, () => false));
+    await page.screenshot({ path: join(SHOTS, "turni-calendario.png"), fullPage: true });
+    await page.goto(`${APP}/docenti`);
+    await settle(page);
+    check("10 · Turni", "la dashboard mostra chi è di turno", (await page.getByTestId("dashboard-shift").filter({ hasText: "Mario Bianchi" }).count()) === 1);
+    check("10 · Turni", "la dashboard segnala le giornate senza docente di turno", (await page.getByTestId("uncovered-alert").count()) === 1);
+    await page.goto(`${APP}/docenti/iscritti?giorno=${D1}`);
+    await settle(page);
+    check("10 · Turni", "l'elenco iscritti indica i docenti di turno", (await page.getByTestId("roster-supervisors").innerText()).includes("Anna Rossi, Mario Bianchi"));
+    const xl = await page.request.get(`${APP}/docenti/iscritti/esporta?giorno=${D1}&formato=xlsx`);
+    const wb2 = new ExcelJS.Workbook();
+    await wb2.xlsx.load(await xl.body());
+    check("10 · Turni", "anche il file Excel riporta i docenti di turno", String(wb2.getWorksheet("Iscritti").getCell("A2").value).includes("Docenti di turno: Anna Rossi, Mario Bianchi"));
+    await page.goto(`${APP}/docenti/turni`);
+    await settle(page);
+    check("10 · Turni", "pagina Turni con i miei turni", (await page.getByTestId("my-shifts").innerText()).toLowerCase().includes("26 novembre"));
+    await page.getByLabel("Solo giornate senza docente di turno").check();
+    check("10 · Turni", "filtro «solo giornate scoperte» esclude quelle coperte", (await page.locator(`[data-day="${D1}"]`).count()) === 0 && (await page.getByTestId("shift-day").count()) > 0);
+    await page.getByLabel("Solo giornate senza docente di turno").uncheck();
+    await page.screenshot({ path: join(SHOTS, "turni.png"), fullPage: true });
+    const d1Card = page.locator(`[data-day="${D1}"]`);
+    await d1Card.getByRole("button", { name: "Lascia il turno" }).click();
+    check("10 · Turni", "il docente lascia il proprio turno", await waitUntil(async () => !(await shiftRow("Anna Rossi"))));
+
+    // docente non amministratore
+    await admin.from("teacher_invitations").upsert({ email: "paolo.neri@liceovoltacomo.edu.it", full_name: "Paolo Neri", is_admin: false });
+    const t2 = await admin.auth.admin.createUser({ email: "paolo.neri@liceovoltacomo.edu.it", password: stack.env.TEACHER_INITIAL_PASSWORD, email_confirm: true });
+    await db.query("update public.teachers set must_change_password = false where id = $1", [t2.data.user.id]);
+    const ctx2 = await newContext();
+    const p2 = await ctx2.newPage();
+    await p2.goto(`${APP}/accesso/docenti`);
+    await p2.fill("#teacher-email", "paolo.neri@liceovoltacomo.edu.it");
+    await p2.fill("#teacher-password", stack.env.TEACHER_INITIAL_PASSWORD);
+    await p2.getByRole("button", { name: "Accedi all'area docenti" }).click();
+    await p2.waitForURL(`${APP}/docenti`, { timeout: 20000 });
+    await p2.goto(`${APP}/docenti/turni`);
+    await settle(p2);
+    const c2 = p2.locator(`[data-day="${D1}"]`);
+    check("10 · Turni", "un docente non amministratore non ha il campo per assegnare altri", (await p2.locator('[data-testid="shift-panel"] input').count()) === 0);
+    check("10 · Turni", "e non può togliere il turno di un collega", (await c2.getByRole("button", { name: /Togli il turno/ }).count()) === 0);
+    await c2.getByRole("button", { name: "Prendo io il turno" }).click();
+    check("10 · Turni", "un docente non amministratore prende il proprio turno", await c2.getByTestId("shift-item").filter({ hasText: "Paolo Neri" }).waitFor({ timeout: 10000 }).then(() => true, () => false));
+    const deny = await fetch(`${stack.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/assign_shift`, {
+      method: "POST",
+      headers: { apikey: stack.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, authorization: `Bearer ${stack.sign({ sub: t2.data.user.id, role: "authenticated", aud: "authenticated", exp: Math.floor(Date.now() / 1000) + 3600 })}`, "content-type": "application/json" },
+      body: JSON.stringify({ p_school_day_id: await dayId(D2), p_teacher_name: "Qualcuno Altro" }),
+    });
+    check("10 · Turni", "anche chiamando direttamente il database un non amministratore non assegna turni", deny.status >= 400);
+    await ctx2.close();
+    const shiftLogs = (await one("select count(*)::int n from public.audit_log where action like 'docente.turno_%'")).n;
+    check("10 · Turni", "turni presi, assegnati e lasciati finiscono nel registro", shiftLogs === 4, String(shiftLogs));
+
     // impostazioni: cambio dell'orario generale registrato
     await page.goto(`${APP}/docenti/calendario`);
     await settle(page);

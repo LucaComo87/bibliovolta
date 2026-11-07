@@ -130,3 +130,39 @@ export async function retryAnnouncement(announcementId: string): Promise<ManageR
   after(dispatchSoon);
   return error ? { ok: false, message: clean(error.message) } : { ok: true, data: { requeued: data ?? 0 } };
 }
+
+/* ---------------------------------------------------------------------
+ * Docenti di turno (sorveglianza dell'aula studio)
+ * ------------------------------------------------------------------- */
+
+/** Il docente collegato prende il turno della giornata. */
+export async function takeShift(schoolDayId: string): Promise<ManageResult> {
+  const supabase = await teacherClient();
+  if (!supabase) return DENIED;
+  if (!z.string().uuid().safeParse(schoolDayId).success) return { ok: false, message: "Giornata non valida." };
+  const { error } = await supabase.rpc("take_shift", { p_school_day_id: schoolDayId });
+  refresh();
+  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+}
+
+/** Un amministratore assegna il turno a un docente indicato per nome e cognome. */
+export async function assignShift(schoolDayId: string, teacherName: string): Promise<ManageResult> {
+  const supabase = await teacherClient();
+  if (!supabase) return DENIED;
+  if (!z.string().uuid().safeParse(schoolDayId).success) return { ok: false, message: "Giornata non valida." };
+  const name = teacherName.replace(/\s+/g, " ").trim();
+  if (name.length < 3 || name.length > 120) return { ok: false, message: "Scrivi nome e cognome del docente." };
+  const { error } = await supabase.rpc("assign_shift", { p_school_day_id: schoolDayId, p_teacher_name: name });
+  refresh();
+  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+}
+
+/** Toglie un turno (il proprio; qualsiasi per un amministratore: lo verifica il database). */
+export async function removeShift(shiftId: string): Promise<ManageResult> {
+  const supabase = await teacherClient();
+  if (!supabase) return DENIED;
+  if (!z.string().uuid().safeParse(shiftId).success) return { ok: false, message: "Turno non valido." };
+  const { error } = await supabase.rpc("remove_shift", { p_shift_id: shiftId });
+  refresh();
+  return error ? { ok: false, message: clean(error.message) } : { ok: true };
+}

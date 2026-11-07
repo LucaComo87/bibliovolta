@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   ws.mergeCells("A1:F1");
   ws.getCell("A1").value = `Aula studio · ${formatDayLong(day)} · ${roster.day.opensAt}–${roster.day.closesAt}`;
   ws.getCell("A1").font = { bold: true, size: 14, color: { argb: "FF0F2350" } };
-  ws.getCell("A2").value = `${rows.length} prenotati su ${roster.day.capacity} posti`;
+  ws.getCell("A2").value = `${rows.length} prenotati su ${roster.day.capacity} posti · Docenti di turno: ${roster.supervisors.join(", ") || "nessuno"}`;
   ws.getCell("A2").font = { italic: true, color: { argb: "FF5B6680" } };
   ws.addRow(header);
   const head = ws.getRow(3);

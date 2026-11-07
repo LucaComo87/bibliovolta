@@ -56,6 +56,7 @@ const TEACHER = [
   ["/docenti/iscritti?giorno=2026-11-30", "Iscritti", {}],
   ["/docenti/comunicazioni", "Comunicazioni", {}],
   ["/docenti/statistiche", "Statistiche", {}],
+  ["/docenti/turni", "Turni di sorveglianza", {}],
   ["/docenti/registro", "Registro", {}],
 ];
 
@@ -179,7 +180,7 @@ async function main() {
             for (const i of document.images) {
               if (i.complete || i.getClientRects().length === 0) continue;
               i.scrollIntoView({ block: "center" }); // le immagini "lazy" partono quando arrivano sullo schermo
-              await new Promise((r) => { i.addEventListener("load", r); i.addEventListener("error", r); setTimeout(r, 4000); });
+              await new Promise((r) => { i.addEventListener("load", r); i.addEventListener("error", r); setTimeout(r, 12000); });
             }
             window.scrollTo(0, 0);
             const imgs = [...document.images].filter((i) => i.getClientRects().length > 0 && getComputedStyle(i).visibility !== "hidden"); // solo immagini visibili su questo dispositivo
@@ -204,7 +205,7 @@ async function main() {
               overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
               offenders,
               h1: document.querySelector("h1")?.textContent?.trim() ?? "",
-              broken: imgs.filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.alt || i.src),
+              broken: imgs.filter((i) => i.getClientRects().length > 0 && (!i.complete || i.naturalWidth === 0)).map((i) => i.alt || i.src),
               photo: imgs.find((i) => decodeURIComponent(i.currentSrc || i.src).includes("biblioteca-volta"))?.naturalWidth ?? 0,
               logo: imgs.some((i) => i.alt === "Logo del Liceo A. Volta di Como" && i.naturalWidth > 0),
             };
@@ -214,6 +215,13 @@ async function main() {
           const name = `${dev}-${role}-${path.replace(/[/?=]/g, "_").replace(/^_$/, "home").replace(/^_/, "")}`;
           await page.screenshot({ path: join(OUT, `${name}.png`), fullPage: dev === "computer" || Boolean(ONLY) });
           const group = `${label} · ${dev}`;
+          // un'immagine ancora in arrivo (ottimizzazione al primo accesso) non è un'immagine rotta: si ricontrolla dopo la schermata
+          if (info.broken.length) {
+            await page
+              .waitForFunction(() => [...document.images].every((i) => i.getClientRects().length === 0 || (i.complete && i.naturalWidth > 0)), null, { timeout: 15000 })
+              .catch(() => {});
+            info.broken = await page.evaluate(() => [...document.images].filter((i) => i.getClientRects().length > 0 && (!i.complete || i.naturalWidth === 0)).map((i) => i.alt || i.src));
+          }
           const ok = res && res.status() < 400 && new URL(page.url()).pathname === path.split("?")[0];
           check(group, "pagina aperta con il ruolo giusto", ok, `${res?.status()} ${page.url()}`);
           check(group, "titolo principale presente", info.h1.length > 0);

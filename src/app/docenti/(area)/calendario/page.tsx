@@ -5,20 +5,25 @@ import { getSeasonCalendar } from "@/lib/bookings/server";
 import { ROUTES } from "@/lib/config";
 import { formatTime, todayInRome } from "@/lib/dates";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getMaxShiftsPerDay, getShiftMap } from "@/lib/teacher/shifts";
 
 /** Calendario gestionale reale (aperture, chiusure, orari, capienza, note). */
 export default async function TeacherCalendarPage() {
-  await requireRole("teacher");
+  const user = await requireRole("teacher");
   const supabase = await createSupabaseServerClient();
-  const [days, { data: settings }] = await Promise.all([
+  const [days, { data: settings }, shifts, maxPerDay] = await Promise.all([
     getSeasonCalendar(supabase),
     supabase.from("app_settings").select("default_opens_at, default_closes_at, cancellation_hours").eq("id", 1).single(),
+    getShiftMap(supabase, user.id),
+    getMaxShiftsPerDay(supabase),
   ]);
   return (
     <LiveTeacherCalendar
       base={ROUTES.teacher}
       today={todayInRome()}
       days={days}
+      shifts={shifts}
+      viewer={{ id: user.id, isAdmin: user.profile.is_admin, maxPerDay }}
       aside={
         <OpeningHoursForm
           opensAt={formatTime(settings?.default_opens_at ?? "14:15")}

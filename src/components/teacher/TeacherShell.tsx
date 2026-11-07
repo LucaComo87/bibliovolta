@@ -1,7 +1,7 @@
 "use client";
 
 import { AppCredit } from "@/components/layout/AppCredit";
-import { BarChart3, CalendarCog, Hourglass, KeyRound, LayoutDashboard, LogOut, Megaphone, ScrollText, Users } from "lucide-react";
+import { BarChart3, CalendarCog, Hourglass, KeyRound, LayoutDashboard, LogOut, Megaphone, ScrollText, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 export const teacherNav = [
   { slug: "", label: "Dashboard", icon: LayoutDashboard },
   { slug: "/calendario", label: "Calendario", icon: CalendarCog },
+  { slug: "/turni", label: "Turni", icon: ShieldCheck },
   { slug: "/lista-attesa", label: "Lista d'attesa", icon: Hourglass },
   { slug: "/iscritti", label: "Iscritti", icon: Users },
   { slug: "/comunicazioni", label: "Comunicazioni", icon: Megaphone },

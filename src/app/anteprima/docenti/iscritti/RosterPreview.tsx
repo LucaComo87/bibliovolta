@@ -15,6 +15,7 @@ export function RosterPreview() {
   const data: RosterData = {
     day: { id: d.day, day: d.day, capacity: d.capacity, opensAt: d.opensAt, closesAt: d.closesAt, isOpen: d.isOpen, closureReason: d.closureReason ?? null },
     days: all.map((x) => ({ day: x.day, booked: x.booked, isOpen: x.isOpen })),
+    supervisors: ["Prof.ssa Anna Esempio"],
     rows: people.filter((p) => p.status === "confirmed").map((p) => ({
       bookingId: p.id, studentId: p.id, ...split(p.name), className: p.className, email: p.email, bookedAt: p.bookedAt, source: "student" as const,
     })),

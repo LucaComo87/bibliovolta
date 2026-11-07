@@ -767,6 +767,53 @@ async function main() {
   check("conservazione: l'operazione è registrata senza dati personali", (await db.query<{ n: number }>("select count(*)::int n from public.audit_log where action = 'privacy.conservazione'")).rows[0].n === 1);
   check("conservazione: le giornate del calendario restano", (await db.query<{ n: number }>("select count(*)::int n from public.school_days")).rows[0].n >= 145);
 
+  // ---- 11. Docenti di turno ------------------------------------------------
+  await asSystem();
+  const admin = (await db.query<{ id: string }>("select id from public.teachers where email = 'nuovo.invito@liceovoltacomo.edu.it'")).rows[0].id;
+  await db.query("update public.teachers set is_admin = true, full_name = 'Anna Rossi' where id = $1", [admin]);
+  const dA = await dayId("2026-11-23");
+  const dB = await dayId("2026-11-24");
+  const shifts = async (d: string) => (await db.query<{ teacher_name: string; teacher_id: string | null }>("select teacher_name, teacher_id from public.supervision_shifts where school_day_id = $1 order by created_at", [d])).rows;
+  await asUser(teacher);
+  check("turni: un docente prende il turno di una giornata", (await fails("select public.take_shift($1)", [dA])) === null);
+  check("turni: il turno porta il suo nome", (await db.query<{ n: string }>("select teacher_name n from public.supervision_shifts where teacher_id = $1", [teacher])).rows[0]?.n === "Prof. Test");
+  check("turni: non si può prendere due volte lo stesso turno", (await fails("select public.take_shift($1)", [dA])) !== null);
+  check("turni: un docente non amministratore non assegna turni ad altri", (await fails("select public.assign_shift($1, 'Mario Bianchi')", [dA])) !== null);
+  check("turni: nessuna scrittura diretta nella tabella", (await fails("insert into public.supervision_shifts (school_day_id, teacher_name) values ($1, 'Intruso')", [dB])) !== null);
+  await asUser(admin);
+  check("turni: l'amministratore assegna un docente scrivendo nome e cognome", (await fails("select public.assign_shift($1, '  Mario   Bianchi ')", [dA])) === null);
+  const sA = await shifts(dA);
+  check("turni: nome ripulito e non collegato ad account se il docente non è registrato", sA.some((x) => x.teacher_name === "Mario Bianchi" && x.teacher_id === null));
+  check("turni: stesso nome due volte rifiutato (maiuscole e spazi ignorati)", (await fails("select public.assign_shift($1, 'mario bianchi')", [dA])) !== null);
+  check("turni: un docente già di turno non può essere riassegnato", (await fails("select public.assign_shift($1, 'prof. test')", [dA])) !== null);
+  check("turni: nome troppo corto rifiutato", (await fails("select public.assign_shift($1, 'Al')", [dB])) !== null);
+  await db.query("select public.assign_shift($1, 'Laura Verdi')", [dA]);
+  check("turni: al massimo 3 docenti di turno per giornata", (await fails("select public.assign_shift($1, 'Carlo Neri')", [dA])) !== null && (await shifts(dA)).length === 3);
+  await db.query("select public.assign_shift($1, 'prof. test')", [dB]);
+  check("turni: se il nome corrisponde a un docente registrato, il turno è collegato al suo account", (await shifts(dB))[0]?.teacher_id === teacher);
+  await asUser(teacher);
+  const ownB = (await db.query<{ id: string }>("select id from public.supervision_shifts where school_day_id = $1 and teacher_id = $2", [dB, teacher])).rows[0].id;
+  const mario = (await db.query<{ id: string }>("select id from public.supervision_shifts where teacher_name = 'Mario Bianchi'")).rows[0].id;
+  check("turni: un docente può lasciare il proprio turno", (await fails("select public.remove_shift($1)", [ownB])) === null && (await shifts(dB)).length === 0);
+  check("turni: un docente non può togliere il turno di un altro", (await fails("select public.remove_shift($1)", [mario])) !== null);
+  check("turni: i docenti vedono tutti i turni", (await db.query("select * from public.supervision_shifts")).rows.length === 3);
+  await asUser(admin);
+  check("turni: l'amministratore può togliere qualsiasi turno", (await fails("select public.remove_shift($1)", [mario])) === null);
+  await asUser(many[5]);
+  check("turni: gli studenti non vedono i turni", (await db.query("select * from public.supervision_shifts")).rows.length === 0);
+  check("turni: gli studenti non possono prendere turni", (await fails("select public.take_shift($1)", [dB])) !== null);
+  await asUser(null);
+  check("turni: i visitatori anonimi non possono fare nulla", (await fails("select * from public.supervision_shifts")) !== null || (await db.query("select * from public.supervision_shifts").catch(() => ({ rows: [] }))).rows.length === 0);
+  await asSystem();
+  const logs = (await db.query<{ action: string; n: number }>("select action, count(*)::int n from public.audit_log where action like 'docente.turno_%' group by 1")).rows;
+  const byAction = Object.fromEntries(logs.map((r) => [r.action, r.n]));
+  check("turni: ogni operazione è nel registro", byAction["docente.turno_preso"] === 1 && byAction["docente.turno_assegnato"] === 3 && byAction["docente.turno_rimosso"] === 2, JSON.stringify(byAction));
+  await db.query("create or replace function public.school_today() returns date language sql stable set search_path = '' as $$ select date '2026-12-01' $$");
+  await asUser(teacher);
+  check("turni: niente turni nelle giornate passate", (await fails("select public.take_shift($1)", [dB])) !== null);
+  await asSystem();
+  await db.query("create or replace function public.school_today() returns date language sql stable set search_path = '' as $$ select (now() at time zone (select s.school_timezone from public.app_settings s where s.id = 1))::date $$");
+
   return report();
 
   async function newUserAsSystem(email: string) {
